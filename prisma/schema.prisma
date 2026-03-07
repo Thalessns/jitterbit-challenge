@@ -1,17 +1,17 @@
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  output   = "../src/generated"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
-model Order {
+model order {
   orderId      String   @id @db.VarChar(20)
-  value        Decimal
+  value        Decimal  @db.Decimal(10, 2)
   creationDate DateTime
+
   items        items[]
 }
 
@@ -19,9 +19,9 @@ model items {
   orderId   String  @map("order_id")
   productId String  @map("product_id")
   quantity  Int
-  price     Decimal
+  price     Decimal @db.Decimal(10, 2)
 
-  order Order @relation(fields: [orderId], references: [orderId])
+  order order @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
 
   @@id([orderId, productId])
 }
