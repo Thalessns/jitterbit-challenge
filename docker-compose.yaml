@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: challenge_password
       POSTGRES_DB: jitterbit_challenge
     ports:
-      - "3001:5440"
+      - "5432:5432"
     restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data

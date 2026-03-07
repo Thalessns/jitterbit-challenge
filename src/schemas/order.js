@@ -1,14 +1,5 @@
 
-const orderItem = {
-    type: 'object',
-    properties: {
-        idItem: { type: 'string' , minLength: 1 },
-        quantidadeItem: { type: 'integer', minimum: 1 },
-        valorItem: { type: 'number', minimum: 0.01 },
-    },
-    additionalProperties: false,
-    required: ['idItem', 'quantidadeItem', 'valorItem']
-}
+const { item } = require('./item')
 
 const orderRequest = {
     type: 'object',
@@ -18,7 +9,7 @@ const orderRequest = {
         dataCriacao: { type: 'string', minLength: 1 },
         items: {
             type: 'array',
-            items: orderItem,
+            items: item,
             minItems: 1
         }
     },
