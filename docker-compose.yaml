@@ -1,0 +1,23 @@
+
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: jitterbit_postgres
+    environment:
+      POSTGRES_USER: challenge_user
+      POSTGRES_PASSWORD: challenge_password
+      POSTGRES_DB: jitterbit_challenge
+    ports:
+      - "3001:5440"
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "psql -U challenge_user -d jitterbit_challenge"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres_data:
