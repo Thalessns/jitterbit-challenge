@@ -1,5 +1,5 @@
 
-const { item } = require('./item')
+const { itemRequest, itemUpdate } = require('./item')
 
 const orderRequest = {
     type: 'object',
@@ -9,7 +9,7 @@ const orderRequest = {
         dataCriacao: { type: 'string', minLength: 1 },
         items: {
             type: 'array',
-            items: item,
+            items: itemRequest,
             minItems: 1
         }
     },
@@ -17,4 +17,17 @@ const orderRequest = {
     required: ['numeroPedido', 'valorTotal', 'dataCriacao', 'items']
 }
 
-module.exports = { orderRequest }
+const orderUpdate = {
+    type: 'object',
+    properties: {
+        valorTotal: { type: ['number', 'null'], minimum: 0.01, default: null },
+        dataCriacao: { type: ['string', 'null'], minLength: 1, default: null },
+        items: {
+            type: 'array',
+            items: itemUpdate,
+            minItems: 0
+        }
+    }
+}
+
+module.exports = { orderRequest, orderUpdate }

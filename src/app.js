@@ -5,14 +5,10 @@ const port = 3000
 app.use(express.json())
 
 const { orderRouter } = require('./routes/orderRoutes')
-app.use('/orders', orderRouter)
+app.use('/order', orderRouter)
 
 app.get('/', (req, res) => {
   res.send('App is alive and running!')
-})
-
-app.listen(port, () => {
-    console.log(`App is listening on port ${port}`)
 })
 
 app.use((error, req, res, next) => {
@@ -24,4 +20,9 @@ app.use((error, req, res, next) => {
       message: "Your request body is not valid according to the schema. Check the API Swagger for more details.",
     })
   }
+  return res.status(error.statusCode).json({status: "error", message: error.message})
+})
+
+app.listen(port, () => {
+    console.log(`App is listening on port ${port}`)
 })
