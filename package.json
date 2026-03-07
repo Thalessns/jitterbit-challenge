@@ -1,0 +1,33 @@
+{
+  "name": "jitterbit-challenge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Thalessns/jitterbit-challenge.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Thalessns/jitterbit-challenge/issues"
+  },
+  "homepage": "https://github.com/Thalessns/jitterbit-challenge#readme",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.4.2",
+    "@prisma/client": "^7.4.2",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "express-json-validator-middleware": "^3.0.1",
+    "pg": "^8.20.0"
+  },
+  "devDependencies": {
+    "prisma": "^7.4.2",
+    "tsx": "^4.21.0"
+  }
+}
