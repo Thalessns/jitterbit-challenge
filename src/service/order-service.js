@@ -1,5 +1,6 @@
 const { prisma } = require("../database/prisma")
 const { prepareResponseData } = require("../utils/data-operations")
+const { validateOrderValue } = require("../utils/validate-order-value")
 const {
     OrderNotFoundError,
     OrderAlreadyExistsError,
@@ -9,6 +10,7 @@ const {
 } = require("../error/custom-errors")
 
 const createOrder = async (orderData) => {
+    validateOrderValue(orderData.valorTotal, orderData.items)
     const result = await prisma.$transaction(async (tx) => {
         try{
             const newOrder = await tx.order.create({
@@ -30,12 +32,12 @@ const createOrder = async (orderData) => {
                 })
                 createdItems.push(newItem)
             }
+            return prepareResponseData(newOrder, createdItems)
         }
         catch(error){
             if (error.code === "P2002") throw new OrderAlreadyExistsError(orderData.numeroPedido)
             throw new DatabaseOperationError(error)
         }
-        return prepareResponseData(newOrder, createdItems)
     })
     return result
 }

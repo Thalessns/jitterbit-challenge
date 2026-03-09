@@ -1,8 +1,13 @@
 const express = require('express')
+const swaggerUi = require('swagger-ui-express')
+const YAML = require('yamljs')
 const app = express()
 const port = 3000
 
+const swaggerDoc = YAML.load('./swagger.yaml')
+
 app.use(express.json())
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
 
 const { orderRouter } = require('./routes/order-routes')
 app.use('/order', orderRouter)
@@ -24,4 +29,5 @@ app.use((error, req, res, next) => {
 
 app.listen(port, () => {
     console.log(`App is listening on port ${port}`)
+    console.log(`Docs available in /api-docs`)
 })
