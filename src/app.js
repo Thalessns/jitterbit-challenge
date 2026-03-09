@@ -4,7 +4,7 @@ const port = 3000
 
 app.use(express.json())
 
-const { orderRouter } = require('./routes/orderRoutes')
+const { orderRouter } = require('./routes/order-routes')
 app.use('/order', orderRouter)
 
 app.get('/', (req, res) => {
@@ -13,13 +13,12 @@ app.get('/', (req, res) => {
 
 app.use((error, req, res, next) => {
   if (error.name === "JsonSchemaValidationError"){
-    console.log("Body: ", req.body)
-    console.log("Validation errors: ", JSON.stringify(error.validationErrors, null, 2))
     return res.status(400).json({
       status: "error",
-      message: "Your request body is not valid according to the schema. Check the API Swagger for more details.",
+      message: `Your request body is not valid according to the schema. Check the API Swagger for more details. ${error}`,
     })
   }
+  if (error.statusCode === undefined) error.statusCode = 500
   return res.status(error.statusCode).json({status: "error", message: error.message})
 })
 
