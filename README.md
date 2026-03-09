@@ -33,7 +33,7 @@ cp .env.example .env
 Utilize o Docker Compose para iniciar o PostgreSQL:
 
 ```bash
-docker-compose up --build -d
+docker compose up --build -d
 ```
 
 Isso irá criar um container PostgreSQL com as seguintes configurações:
