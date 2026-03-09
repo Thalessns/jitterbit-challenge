@@ -25,6 +25,14 @@ class OrderAlreadyExistsError extends CustomApiError {
 
 }
 
+class InvalidOrderValueError extends CustomApiError {
+
+    constructor(expectedValue, currentValue){
+        super(`The order 'valorTotal' is '${expectedValue}', but the items value sum to '${currentValue}'.`, 400)
+    }
+
+}
+
 class ItemNotFoundError extends CustomApiError{
 
     constructor(itemId){
@@ -52,6 +60,7 @@ class DatabaseOperationError extends CustomApiError{
 module.exports = {
     OrderNotFoundError, 
     OrderAlreadyExistsError,
+    InvalidOrderValueError,
     ItemNotFoundError,
     InvalidIdTypeError,
     DatabaseOperationError

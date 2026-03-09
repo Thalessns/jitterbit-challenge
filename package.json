@@ -24,10 +24,12 @@
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "express-json-validator-middleware": "^3.0.1",
-    "pg": "^8.20.0"
+    "pg": "^8.20.0",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "prisma": "^7.4.2",
+    "prisma": "^6.19.2",
     "tsx": "^4.21.0"
   }
 }
