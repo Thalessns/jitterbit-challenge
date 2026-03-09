@@ -10,7 +10,9 @@ app.use(express.json())
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
 
 const { orderRouter } = require('./routes/order-routes')
-app.use('/order', orderRouter)
+const { authMiddleware } = require('./middleware/auth')
+
+app.use('/order', authMiddleware, orderRouter)
 
 app.get('/', (req, res) => {
   res.send('App is alive and running!')
