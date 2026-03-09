@@ -53,7 +53,7 @@ npm install
 ### 5. Execute as migrações do banco de dados
 
 ```bash
-npx prisma migrate dev
+npx prisma migrate deploy
 ```
 
 ### 6. Gere o cliente Prisma
@@ -62,9 +62,7 @@ npx prisma migrate dev
 npx prisma generate
 ```
 
-## ▶️ Executando a Aplicação
-
-### Modo de desenvolvimento
+## Executando a Aplicação
 
 ```bash
 node src/app.js
@@ -72,7 +70,9 @@ node src/app.js
 
 A API estará disponível em: http://localhost:3000
 
-### Documentação Swagger
+### Documentação Postman e Swagger
+
+Existem duas coleções Postman disponíveis na pasta `/postman` na raiz do projeto.
 
 A documentação interativa da API está disponível em:
 
@@ -84,8 +84,7 @@ A API suporta autenticação JWT externa. Para habilitar:
 
 1. Defina `ENABLE_AUTH=true` no arquivo `.env`
 2. A env `JWT_SERVICE_ENDPOINT` já está configurada, você pode encontrar mais informações
-sobre o serviço de autenticação aqui, será possível criar seu access_group e sua signature.
-- [jwt-auth-service](https://github.com/Thalessns/jwt-auth-service)
+sobre o serviço de autenticação aqui, será possível criar seu access_group e sua signature.Veja mais sobre o serviço de JWT aqui: [jwt-auth-service](https://github.com/Thalessns/jwt-auth-service)
 3. Inclua os seguintes headers nas requisições:
-   - `access_group`: Grupo de acesso do usuário
-   - `signature`: Assinatura para autorização
+   - `access_group`: Grupo de acesso do usuário.
+   - `signature`: Assinatura para autorização.
