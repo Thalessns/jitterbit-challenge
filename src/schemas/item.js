@@ -2,7 +2,7 @@
 const itemRequest = {
     type: 'object',
     properties: {
-        idItem: { type: 'string' , minLength: 1 },
+        idItem: { type: 'string' , minLength: 1, maxLength: 50 },
         quantidadeItem: { type: 'integer', minimum: 1 },
         valorItem: { type: 'number', minimum: 0.01 },
     },

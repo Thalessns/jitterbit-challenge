@@ -1,6 +1,12 @@
 const { prisma } = require("../database/prisma")
 const { prepareResponseData } = require("../utils/data-operations")
-const { OrderNotFoundError, OrderAlreadyExistsError } = require("../error/custom-errors")
+const {
+    OrderNotFoundError,
+    OrderAlreadyExistsError,
+    ItemNotFoundError,
+    InvalidIdTypeError,
+    DatabaseOperationError 
+} = require("../error/custom-errors")
 
 const createOrder = async (orderData) => {
     const result = await prisma.$transaction(async (tx) => {
@@ -26,7 +32,8 @@ const createOrder = async (orderData) => {
             }
         }
         catch(error){
-            if (error.code === "P2002") throw new OrderAlreadyExistsError
+            if (error.code === "P2002") throw new OrderAlreadyExistsError(orderData.numeroPedido)
+            throw new DatabaseOperationError(error)
         }
         return prepareResponseData(newOrder, createdItems)
     })
@@ -46,11 +53,14 @@ const listAllOrders = async () => {
 }
 
 const getOrder = async (id) => {
+    if (typeof id != 'string'){
+        throw new InvalidIdTypeError(id)
+    }
     const order = await prisma.order.findFirst(
         { where: {orderId: id} }
     )
-    if (order == null){
-        throw new OrderNotFoundError()
+    if (order === null){
+        throw new OrderNotFoundError(id)
     }
     const items = await prisma.items.findMany(
         { where: {orderId: id}, distinct: ["productId"] }
@@ -58,18 +68,52 @@ const getOrder = async (id) => {
     return prepareResponseData(order, items)
 }
 
-const updateOrder = async (id, orderUpdate) => {
+const updateFullOrder = async (id, orderUpdate) => {
     const order = await getOrder(id)
+    let orderData = prepareUpdateOrderData(orderUpdate)
+    let itemsData = prepareUpdateItemsData(orderUpdate.items)
+    const result = await prisma.$transaction(async (tx) => {
+        let updatedOrder = order
+        let updatedItems = orderUpdate.items
+        if (Object.keys(orderData).length > 0){
+            updatedOrder = await updateOrder(id, orderData, tx)
+        }
+        if (itemsData.length > 0){
+            updatedItems = []
+            for (const item of itemsData){
+                const itemId = item.productId
+                delete item.productId
+                const updatedItem = await updateItem(id, itemId, item, tx) 
+                updatedItems.push(updatedItem)
+            }
+        }
+        return prepareResponseData(updatedOrder, updatedItems)
+    })
+    return result
+}
+
+const prepareUpdateOrderData = (orderUpdate) => {
     let orderData = {}
-    let itemsData = []
     if (orderUpdate.valorTotal != null){
         orderData.value = orderUpdate.valorTotal
     }
     if (orderUpdate.dataCriacao != null){
         orderData.creationDate = orderUpdate.dataCriacao
     }
-    if (orderUpdate.items.length > 0){
-        for (const item of orderUpdate.items){
+    return orderData
+}
+
+const updateOrder = async (orderId, orderData, tx) => {
+    return await tx.order.update({
+        where: { orderId: orderId },
+        data: orderData
+    })
+}
+
+const prepareUpdateItemsData = (itemsUpdate) => {
+    let itemsData = []
+    if (itemsUpdate.length > 0){
+        for (const item of itemsUpdate){
             let itemData = {}
             if (item.quantidadeItem != null){
                 itemData.quantity = item.quantidadeItem
@@ -83,35 +127,24 @@ const updateOrder = async (id, orderUpdate) => {
             }
         }
     }
-    const result = await prisma.$transaction(async (tx) => {
-        let updatedOrder = order
-        let updatedItems = orderUpdate.items
-        if (Object.keys(orderData).length > 0){
-            console.log("AQUi")
-            updatedOrder = await tx.order.update({
-                where: { orderId: id },
-                data: orderData
-            })
-        }
-        if (itemsData.length > 0){
-            updatedItems = []
-            for (const item of itemsData){
-                const itemId = item.productId
-                delete item.productId
-                const updatedItem = await tx.items.update({
-                    data: item,
-                    where: {
-                        orderId_productId: { 
-                            orderId: id, productId: itemId 
-                        }
-                    }
-                })
-                updatedItems.push(updatedItem)
+    return itemsData
+}
+
+const updateItem = async (orderId, itemId, item, tx) => {
+    try{
+        return await tx.items.update({
+        data: item,
+        where: {
+            orderId_productId: { 
+                orderId: orderId, productId: itemId 
             }
         }
-        return prepareResponseData(updatedOrder, updatedItems)
-    })
-    return result
+        })
+    }
+    catch(error){
+        if (error.code === "P2025") throw new ItemNotFoundError(itemId)
+        throw new DatabaseOperationError(error)
+    }
 }
 
 const deleteOrder = async (id) => {
@@ -122,4 +155,4 @@ const deleteOrder = async (id) => {
     return true
 }
 
-module.exports = { createOrder, listAllOrders, getOrder, updateOrder, deleteOrder }
+module.exports = { createOrder, listAllOrders, getOrder, updateFullOrder, deleteOrder }

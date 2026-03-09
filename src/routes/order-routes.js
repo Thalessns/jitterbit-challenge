@@ -3,7 +3,7 @@ const orderRouter = express.Router()
 const validate = require('../middleware/validator')
 const { orderRequest, orderUpdate } = require('../schemas/order')
 
-const { createOrder, listAllOrders, getOrder, updateOrder, deleteOrder, } = require('../service/order-service')
+const { createOrder, listAllOrders, getOrder, updateFullOrder, deleteOrder, } = require('../service/order-service')
 
 orderRouter.post("/", validate({ body: orderRequest }), async (req, res) => {
     const result = await createOrder(req.body)
@@ -21,7 +21,7 @@ orderRouter.get("/:id", async (req, res) => {
 })
 
 orderRouter.patch("/:id", validate({ body: orderUpdate }), async (req, res) => {
-    const result = await updateOrder(req.params.id, req.body)
+    const result = await updateFullOrder(req.params.id, req.body)
     res.status(200).json(result)
 })
 
